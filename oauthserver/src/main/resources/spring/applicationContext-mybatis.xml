@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop" xsi:schemaLocation="
-http://www.springframework.org/schema/beans 
-http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
-http://www.springframework.org/schema/tx 
-http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-http://www.springframework.org/schema/aop 
-http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
 	<!-- JNDI方式配置数据源 -->
 	<!-- <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> <property name="jndiName" value="${jndiName}"></property> </bean> -->
@@ -56,15 +57,15 @@ http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 		<property name="mapperLocations" value="classpath:maps/*Mapper.xml" />
 		<!-- 分页插件配置 -->
         <property name="plugins">
-	    <array>
-	      <bean class="com.github.pagehelper.PageHelper">
-	        <property name="properties">
-	          <value>
-	            dialect=hsqldb
-	          </value>
-	        </property>
-	      </bean>
-	    </array>
+		    <array>
+		      <bean class="com.github.pagehelper.PageInterceptor">
+		        <property name="properties">
+		          <value>
+		            helperDialect=mysql
+		          </value>
+		        </property>
+		      </bean>
+		    </array>
   		</property>
 	</bean>
 	

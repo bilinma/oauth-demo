@@ -14,6 +14,7 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,15 +42,21 @@ public class ServerController{
     String code= null;
     
 	
-	//提交申请code的请求
-	@RequestMapping("/requestServerCode")
-	public String requestServerFirst(HttpServletRequest request, HttpServletResponse response, RedirectAttributes attr) throws OAuthProblemException{
+	/**
+	 * 1、提交申请code的请求
+	 * @param request
+	 * @param response
+	 * @param attr
+	 * @return
+	 * @throws OAuthProblemException
+	 */
+	@RequestMapping("/requestAuthCode")
+	public String requestAuthCode(HttpServletRequest request, HttpServletResponse response, RedirectAttributes attr) throws OAuthProblemException{
 		clientId = "clientId";
 		clientSecret = "clientSecret";
-	    accessTokenUrl = "responseCode";
-	    userInfoUrl = "userInfoUrl";
-	    redirectUrl = "http://localhost:8080/oauthclient01/server/callbackCode";
-	    response_type = "code";
+	    accessTokenUrl = "responseAuthCode";
+	    redirectUrl = "http://localhost:8080/oauthclient01/server/getAccessToken";
+	    response_type = ResponseType.CODE.toString();
 	    
 		OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 		String requestUrl = null;
@@ -69,15 +76,19 @@ public class ServerController{
 		return "redirect:http://localhost:8080/oauthserver/"+requestUrl ;
 	}
 	
-	//接受客户端返回的code，提交申请access token的请求
-	@RequestMapping("/callbackCode")
-	public Object toLogin(HttpServletRequest request) throws OAuthProblemException{
-		logger.debug("-----------客户端/callbackCode--------------------------------------------------------------------------------");
+	/**
+	 * 2、接受客户端返回的code，提交申请accessToken的请求
+	 * @param request
+	 * @return
+	 * @throws OAuthProblemException
+	 */
+	@RequestMapping("/getAccessToken")
+	public Object getAccessToken(HttpServletRequest request) throws OAuthProblemException{
+		logger.debug("-----------客户端/getAccessToken--------------------------------------------------------------------------------");
 		clientId = "clientId";
 		clientSecret = "clientSecret";
 		accessTokenUrl="http://localhost:8080/oauthserver/responseAccessToken";
-	    userInfoUrl = "userInfoUrl";
-	    redirectUrl = "http://localhost:8080/oauthclient01/server/accessToken";
+	    redirectUrl = "http://localhost:8080/oauthclient01/server/getAccessToken";
 	    HttpServletRequest httpRequest = (HttpServletRequest) request;
 	    code = httpRequest.getParameter("code"); 
 	    logger.debug(code);
@@ -97,40 +108,41 @@ public class ServerController{
 			String accessToken = oAuthResponse.getAccessToken();
 			//查看access token是否过期
             Long expiresIn = oAuthResponse.getExpiresIn();
-            logger.debug("客户端/callbackCode方法的token：：："+accessToken);
-            logger.debug("-----------客户端/callbackCode--------------------------------------------------------------------------------");
-            return "redirect:http://localhost:8080/oauthclient01/server/accessToken?accessToken="+accessToken;
+            logger.debug("客户端/getAccessToken方法的token：：："+accessToken);
+            logger.debug("-----------客户端/getAccessToken--------------------------------------------------------------------------------");
+            return "redirect:http://localhost:8080/oauthclient01/server/getUserInfo?accessToken="+accessToken;
 		} catch (OAuthSystemException e) {
 			e.printStackTrace();
 		}
 	    return null;
 	}
 	
-	//接受服务端传回来的access token，由此token去请求服务端的资源（用户信息等）
-	@RequestMapping("/accessToken")
-	public ModelAndView accessToken(String accessToken) {
-		logger.debug("---------客户端/accessToken----------------------------------------------------------------------------------");
+	/**
+	 * 3、接受服务端传回来的access token，由此token去请求服务端的资源（用户信息等）
+	 * @param accessToken
+	 * @return
+	 */
+	@RequestMapping("/getUserInfo")
+	public ModelAndView getUserInfo(String accessToken) {
+		logger.debug("---------客户端/getUserInfo----------------------------------------------------------------------------------");
 		userInfoUrl = "http://localhost:8080/oauthserver/userInfo";
 		logger.debug("accessToken");
 		OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-		
+		ModelAndView modelAndView = null;
 		try {
-	        OAuthClientRequest userInfoRequest = new OAuthBearerClientRequest(userInfoUrl)
-	        .setAccessToken(accessToken).buildQueryMessage();
+	        OAuthClientRequest userInfoRequest = new OAuthBearerClientRequest(userInfoUrl).setAccessToken(accessToken).buildQueryMessage();
 	        OAuthResourceResponse resourceResponse = oAuthClient.resource(userInfoRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 	        String username = resourceResponse.getBody();
 	        logger.debug(username);
-	        ModelAndView modelAndView = new ModelAndView("usernamePage");
+	        modelAndView = new ModelAndView("usernamePage");
 	        modelAndView.addObject("username", username);
-	        logger.debug("---------客户端/accessToken----------------------------------------------------------------------------------");
-	        return modelAndView;
 		} catch (OAuthSystemException e) {
 			e.printStackTrace();
 		} catch (OAuthProblemException e) {
 			e.printStackTrace();
 		}
-		logger.debug("---------客户端/accessToken----------------------------------------------------------------------------------");
-		return null;
+		logger.debug("---------客户端/getUserInfo----------------------------------------------------------------------------------");
+		return modelAndView;
 	}
 	
 }

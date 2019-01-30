@@ -25,9 +25,13 @@ public class AccessTokenController {
 	private static Logger logger = Logger.getLogger(AccessTokenController.class);
 	
 	
-	//获取客户端的code码，向客户端返回access token
+	/**
+	 * 获取客户端的code码，向客户端返回access token
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value="/responseAccessToken",method = RequestMethod.POST)  
-	public HttpEntity token(HttpServletRequest request){
+	public HttpEntity responseAccessToken(HttpServletRequest request){
 		logger.debug("--------服务端/responseAccessToken-----------------------------------------------------------");
 		OAuthIssuer oauthIssuerImpl=null;
 		 OAuthResponse response=null;
@@ -47,23 +51,16 @@ public class AccessTokenController {
 	                    .setAccessToken(accessToken)
 	                    .buildJSONMessage();
 			}
-			
-            
 			logger.debug("--------服务端/responseAccessToken-----------------------------------------------------------");
-            
           //根据OAuthResponse生成ResponseEntity
             return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 		} catch (OAuthSystemException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (OAuthProblemException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	     logger.debug("--------服务端/responseAccessToken-----------------------------------------------------------");
 		return null;
-		
-		
 	}
 
 }

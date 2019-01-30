@@ -17,7 +17,6 @@
 		<!-- 配置资源文件 -->
 		<property name="locations">
 			<list>
-				<value>classpath:properties/jdbc.properties</value>
 				<value>classpath:properties/config.properties</value>
 				<value>classpath:properties/log4j.properties</value>
 			</list>

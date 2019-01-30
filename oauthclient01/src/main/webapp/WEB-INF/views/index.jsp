@@ -45,7 +45,7 @@ oauthClientDemo!!
 function gotoserver(){
 	//alert("hah");
 	var url = "${pageContext.request.contextPath}";
-	window.location.href = url+"/server/requestServerCode";
+	window.location.href = url+"/server/requestAuthCode";
 }
 </script>
    
