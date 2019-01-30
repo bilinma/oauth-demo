@@ -1,8 +1,8 @@
 # oauth-demo
-Oauth2
+Java的oauth2.0 服务端与客户端的实现
 
 oauth原理简述
-oauth本身不是技术，而是一项资源授权协议，重点是协议！Apache基金会提供了针对Java的oauth封装。我们做Java web项目想要实现oauth协议进行资源授权访问，直接使用该封装就可以。
+oauth本身不是技术，而是一项资源授权协议，重点是协议！Apache基金会提供了针对Java的oauth封装。我们做Java web项目想要实现oauth协议进行资源授权访问，直接使用该封装就可以。OAuth 协议为用户资源的授权提供了一个安全又简易的标准。与以往的授权方式不同之处是 OAuth的授权不会使第三方触及到用户的帐号信息（如用户名与密码），即第三方无需使用用户的用户名与密码就可以申请获得该用户资源的授权，因此 OAuth是安全的。OAuth 是 Open Authorization 的简写 
 
 整个开发流程简述一下：
 
