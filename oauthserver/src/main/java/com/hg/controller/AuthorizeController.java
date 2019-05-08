@@ -37,21 +37,16 @@ public class AuthorizeController {
 	private UserService userService;
 
 	// 向客户端返回授权许可码 code
-	@RequestMapping("/responseCode")
-	public Object toShowUser(Model model, HttpServletRequest request) {
-		logger.debug("----------服务端/responseCode--------------------------------------------------------------");
+	@RequestMapping("/responseAuthCode")
+	public Object responseAuthCode(Model model, HttpServletRequest request) {
+		logger.debug("----------服务端/responseAuthCode--------------------------------------------------------------");
 
 		try {
 			// 构建OAuth 授权请求
 			OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
-			/*
-			 * oauthRequest.getClientId(); oauthRequest.getResponseType();
-			 * oauthRequest.getRedirectURI();
-			 * logger.debug(oauthRequest.getClientId());
-			 * logger.debug(oauthRequest.getResponseType());
-			 * logger.debug(oauthRequest.getRedirectURI());
-			 */
-
+			logger.debug(oauthRequest.getClientId());
+			logger.debug(oauthRequest.getResponseType());
+			logger.debug(oauthRequest.getRedirectURI());
 			if (oauthRequest.getClientId() != null && oauthRequest.getClientId() != "") {
 				// 设置授权码
 				String authorizationCode = "authorizationCode";
@@ -66,8 +61,8 @@ public class AuthorizeController {
 				String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
 				// 构建响应
 				final OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
-				logger.debug("服务端/responseCode内，返回的回调路径：" + response.getLocationUri());
-				logger.debug("----------服务端/responseCode--------------------------------------------------------------");
+				logger.debug("服务端/responseAuthCode内，返回的回调路径：" + response.getLocationUri());
+				logger.debug("----------服务端/responseAuthCode--------------------------------------------------------------");
 				String responceUri = response.getLocationUri();
 
 				// 根据OAuthResponse返回ResponseEntity响应
@@ -75,7 +70,6 @@ public class AuthorizeController {
 				try {
 					headers.setLocation(new URI(response.getLocationUri()));
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return "redirect:" + responceUri;
@@ -86,7 +80,7 @@ public class AuthorizeController {
 		} catch (OAuthProblemException e) {
 			e.printStackTrace();
 		}
-		logger.debug("----------服务端/responseCode--------------------------------------------------------------");
+		logger.debug("----------服务端/responseAuthCode--------------------------------------------------------------");
 		return null;
 
 	}
